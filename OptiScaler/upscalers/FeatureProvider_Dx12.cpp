@@ -141,19 +141,21 @@ bool FeatureProvider_Dx12::ChangeFeature(Upscaler upscaler, ID3D12Device* device
 
             State::Instance().currentFeature = nullptr;
 
-            if (state.gameQuirks & GameQuirk::FastFeatureReset)
-            {
-                LOG_DEBUG("sleeping before reset of current feature for 100ms (Fast Feature Reset)");
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            else
-            {
-                LOG_DEBUG("sleeping before reset of current feature for 1000ms");
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            }
+            Util::DelayedDestroy(std::move(contextData->feature));
 
-            contextData->feature.reset();
-            contextData->feature = nullptr;
+            // if (state.gameQuirks & GameQuirk::FastFeatureReset)
+            //{
+            //     LOG_DEBUG("sleeping before reset of current feature for 100ms (Fast Feature Reset)");
+            //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            // }
+            // else
+            //{
+            //     LOG_DEBUG("sleeping before reset of current feature for 1000ms");
+            //     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            // }
+
+            // contextData->feature.reset();
+            // contextData->feature = nullptr;
         }
         else // Clean up state if no feature is set
         {

@@ -120,7 +120,7 @@ class FrameDescriptorHeap
         // For now rely on OS to clean up on exit
         // Need to check if it's about they are being use
         // Also need to create shaders when they are used to prevent creating heaps when not used
-        return;
+        // return;
 
         if (heapCSU)
             heapCSU->Release();
