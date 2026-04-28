@@ -42,9 +42,9 @@ void RCAS_Common::FillMotionConstants(InternalConstantsDA& OutConstants, const R
     OutConstants.DepthIsLinear = InConstants.DepthIsLinear ? 1 : 0;
     OutConstants.DepthIsReversed = InConstants.DepthIsReversed ? 1 : 0;
     OutConstants.DepthScale =
-        Config::Instance()->DADepthScale.value_or(OutConstants.DepthIsLinear == 0 ? 4.0f : 250.0f);
+        Config::Instance()->DADepthScale.value_or(OutConstants.DepthIsLinear == 0 ? 35.0f : 250.0f);
     OutConstants.DepthBias =
-        Config::Instance()->DADepthBias.value_or(OutConstants.DepthIsLinear == 0 ? 0.01f : 0.0015f);
+        Config::Instance()->DADepthBias.value_or(OutConstants.DepthIsLinear == 0 ? 0.001f : 0.0015f);
 
     OutConstants.DepthLinearA = InConstants.CameraNear * InConstants.CameraFar;
     OutConstants.DepthLinearB = InConstants.CameraFar;
