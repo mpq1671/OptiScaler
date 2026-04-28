@@ -10,7 +10,10 @@ void XeLL::xell_sleep(uint32_t frame_id)
 
     // Don't call XeLL when trying to disable XeLL with XeFG active
     if (!inited_using_context || is_enabled())
+    {
+        LOG_TRACE_FAKENVAPI("Sleeping with frame_id: {}", frame_id);
         XeLLProxy::Sleep()(XeLLProxy::Context(), frame_id);
+    }
 }
 
 void XeLL::add_marker(uint32_t frame_id, xell_latency_marker_type_t marker)
