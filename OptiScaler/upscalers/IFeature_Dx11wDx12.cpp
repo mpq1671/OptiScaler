@@ -789,8 +789,6 @@ bool IFeature_Dx11wDx12::Init(ID3D11Device* InDevice, ID3D11DeviceContext* InCon
         return false;
     }
 
-    SetInitParameters(InParameters);
-
     // Non-DLSS upscalers don't use the cmdList during Init
     // We have more than one cmdList so unsure how that would even work
     SetInit(dx12Feature->Init(_dx11on12Device, Dx12CommandList[0], InParameters));

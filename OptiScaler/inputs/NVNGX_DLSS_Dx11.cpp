@@ -659,16 +659,12 @@ NVSDK_NGX_API NVSDK_NGX_Result NVSDK_NGX_D3D11_EvaluateFeature(ID3D11DeviceConte
 
     auto upscaleResult = deviceContext->Evaluate(InDevCtx, InParameters);
 
-    if (!upscaleResult)
-    {
-        ImGui::InsertNotification({ ImGuiToastType::Error, 10000, "Upscaler failed to run!" });
-    }
-
     auto upscaler = deviceContext->GetUpscalerType();
     if (!upscaleResult && !deviceContext->IsInited() &&
         (upscaler == Upscaler::XeSS || upscaler == Upscaler::XeSS_on12 || upscaler == Upscaler::DLSS ||
          upscaler == Upscaler::FFX_on12))
     {
+        ImGui::InsertNotification({ ImGuiToastType::Error, 10000, "Upscaler failed to run!" });
         state.newBackend = Upscaler::FSR22;
         state.changeBackend[handleId] = true;
     }

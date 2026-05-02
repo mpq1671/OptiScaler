@@ -14,11 +14,4 @@ FFXFeatureDx11on12::FFXFeatureDx11on12(unsigned int InHandleId, NVSDK_NGX_Parame
       IFeature(InHandleId, SetParameters(InParameters))
 {
     dx12Feature = std::make_unique<FFXFeatureDx12>(InHandleId, InParameters);
-
-    _moduleLoaded = dx12Feature->ModuleLoaded();
-
-    if (_moduleLoaded)
-        LOG_INFO("amd_fidelityfx_dx12.dll methods loaded!");
-    else
-        LOG_ERROR("can't load amd_fidelityfx_dx12.dll methods!");
 }

@@ -8,6 +8,4 @@ FSR2FeatureDx11on12::FSR2FeatureDx11on12(unsigned int InHandleId, NVSDK_NGX_Para
       IFeature(InHandleId, InParameters)
 {
     dx12Feature = std::make_unique<FSR2FeatureDx12>(InHandleId, InParameters);
-
-    _moduleLoaded = true;
 }

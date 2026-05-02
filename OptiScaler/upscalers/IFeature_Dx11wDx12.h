@@ -12,6 +12,14 @@
 
 class IFeature_Dx11wDx12 : public virtual IFeature_Dx11
 {
+  private:
+    template <typename F, typename Default> auto CallFeature(F&& f, Default&& def)
+    {
+        if (auto feature = dx12Feature.get(); feature)
+            return f(feature);
+        return def;
+    }
+
   protected:
     // Dx11w12 part
     using D3D11_TEXTURE2D_DESC_C = struct D3D11_TEXTURE2D_DESC_C
@@ -81,15 +89,136 @@ class IFeature_Dx11wDx12 : public virtual IFeature_Dx11
   public:
     bool Init(ID3D11Device* InDevice, ID3D11DeviceContext* InContext, NVSDK_NGX_Parameter* InParameters) final;
     bool Evaluate(ID3D11DeviceContext* DeviceContext, NVSDK_NGX_Parameter* InParameters) final;
+    bool IsWithDx12() final { return true; }
+
     feature_version Version() final
     {
-        if (auto feature = dx12Feature.get(); feature)
-            return feature->Version();
-        else
-            return {};
+        return CallFeature([](auto f) { return f->Version(); }, feature_version {});
     }
 
-    bool IsWithDx12() final { return true; }
+    size_t JitterCount() override
+    {
+        return CallFeature([](auto f) { return f->JitterCount(); }, size_t {});
+    }
+
+    void TickFrozenCheck() override
+    {
+        if (auto feature = dx12Feature.get(); feature)
+            return feature->TickFrozenCheck();
+    };
+
+    bool IsFrozen() override
+    {
+        return CallFeature([](auto f) { return f->IsFrozen(); }, bool {});
+    };
+    bool UpdateOutputResolution(const NVSDK_NGX_Parameter* InParameters) override
+    {
+        return CallFeature([&](auto f) { return f->UpdateOutputResolution(InParameters); }, bool {});
+    };
+    uint32_t DisplayWidth() override
+    {
+        return CallFeature([](auto f) { return f->DisplayWidth(); }, uint32_t {});
+    };
+    uint32_t DisplayHeight() override
+    {
+        return CallFeature([](auto f) { return f->DisplayHeight(); }, uint32_t {});
+    };
+    uint32_t TargetWidth() override
+    {
+        return CallFeature([](auto f) { return f->TargetWidth(); }, uint32_t {});
+    };
+    uint32_t TargetHeight() override
+    {
+        return CallFeature([](auto f) { return f->TargetHeight(); }, uint32_t {});
+    };
+    uint32_t RenderWidth() override
+    {
+        return CallFeature([](auto f) { return f->RenderWidth(); }, uint32_t {});
+    };
+    uint32_t RenderHeight() override
+    {
+        return CallFeature([](auto f) { return f->RenderHeight(); }, uint32_t {});
+    };
+    NVSDK_NGX_PerfQuality_Value PerfQualityValue() override
+    {
+        return CallFeature([](auto f) { return f->PerfQualityValue(); }, NVSDK_NGX_PerfQuality_Value {});
+    }
+    bool IsInitParameters() override
+    {
+        return CallFeature([](auto f) { return f->IsInitParameters(); }, bool {});
+    };
+    bool IsInited() override
+    {
+        return CallFeature([](auto f) { return f->IsInited(); }, bool {});
+    }
+    float Sharpness() override
+    {
+        return CallFeature([](auto f) { return f->Sharpness(); }, float {});
+    }
+    bool HasColor() override
+    {
+        return CallFeature([](auto f) { return f->HasColor(); }, bool {});
+    }
+    bool HasDepth() override
+    {
+        return CallFeature([](auto f) { return f->HasDepth(); }, bool {});
+    }
+    bool HasMV() override
+    {
+        return CallFeature([](auto f) { return f->HasMV(); }, bool {});
+    }
+    bool HasTM() override
+    {
+        return CallFeature([](auto f) { return f->HasTM(); }, bool {});
+    }
+    bool AccessToReactiveMask() override
+    {
+        return CallFeature([](auto f) { return f->AccessToReactiveMask(); }, bool {});
+    }
+    bool HasExposure() override
+    {
+        return CallFeature([](auto f) { return f->HasExposure(); }, bool {});
+    }
+    bool HasOutput() override
+    {
+        return CallFeature([](auto f) { return f->HasOutput(); }, bool {});
+    }
+    bool ModuleLoaded() override
+    {
+        return CallFeature([](auto f) { return f->ModuleLoaded(); }, bool {});
+    }
+    long FrameCount() override
+    {
+        return CallFeature([](auto f) { return f->FrameCount(); }, long {});
+    }
+    bool DepthLinear() override
+    {
+        return CallFeature([](auto f) { return f->DepthLinear(); }, bool {});
+    }
+    bool AutoExposure() override
+    {
+        return CallFeature([](auto f) { return f->AutoExposure(); }, bool {});
+    }
+    bool DepthInverted() override
+    {
+        return CallFeature([](auto f) { return f->DepthInverted(); }, bool {});
+    }
+    bool IsHdr() override
+    {
+        return CallFeature([](auto f) { return f->IsHdr(); }, bool {});
+    }
+    bool JitteredMV() override
+    {
+        return CallFeature([](auto f) { return f->JitteredMV(); }, bool {});
+    }
+    bool LowResMV() override
+    {
+        return CallFeature([](auto f) { return f->LowResMV(); }, bool {});
+    }
+    bool SharpenEnabled() override
+    {
+        return CallFeature([](auto f) { return f->SharpenEnabled(); }, bool {});
+    }
 
     IFeature_Dx11wDx12(unsigned int InHandleId, NVSDK_NGX_Parameter* InParameters);
 
