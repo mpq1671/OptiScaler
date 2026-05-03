@@ -147,9 +147,5 @@ HCC_Dx12::~HCC_Dx12()
         _frameHeaps[i].ReleaseHeaps();
     }
 
-    if (_buffer != nullptr)
-    {
-        _buffer->Release();
-        _buffer = nullptr;
-    }
+    SAFE_RELEASE(_buffer);
 }

@@ -254,15 +254,8 @@ IFeature_Dx12::~IFeature_Dx12()
     if (State::Instance().isShuttingDown)
         return;
 
-    if (Imgui != nullptr && Imgui.get() != nullptr)
-        Imgui.reset();
-
-    if (OutputScaler != nullptr && OutputScaler.get() != nullptr)
-        OutputScaler.reset();
-
-    if (RCAS != nullptr && RCAS.get() != nullptr)
-        RCAS.reset();
-
-    if (Bias != nullptr && Bias.get() != nullptr)
-        Bias.reset();
+    Imgui.reset();
+    OutputScaler.reset();
+    RCAS.reset();
+    Bias.reset();
 }

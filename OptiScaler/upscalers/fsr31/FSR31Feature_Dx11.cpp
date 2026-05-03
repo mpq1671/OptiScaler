@@ -12,16 +12,6 @@ using namespace OptiMath;
     dest.Format = src.Format;                                                                                          \
     dest.BindFlags = src.BindFlags;
 
-#define SAFE_RELEASE(p)                                                                                                \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (p && p != nullptr)                                                                                         \
-        {                                                                                                              \
-            (p)->Release();                                                                                            \
-            (p) = nullptr;                                                                                             \
-        }                                                                                                              \
-    } while ((void) 0, 0);
-
 FSR31FeatureDx11::FSR31FeatureDx11(unsigned int InHandleId, NVSDK_NGX_Parameter* InParameters)
     : FSR31Feature(InHandleId, InParameters), IFeature_Dx11(InHandleId, InParameters),
       IFeature(InHandleId, InParameters)

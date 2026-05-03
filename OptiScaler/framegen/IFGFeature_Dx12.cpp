@@ -363,17 +363,8 @@ void IFGFeature_Dx12::DestroyCopyCmdList()
 {
     for (size_t i = 0; i < BUFFER_COUNT; i++)
     {
-        if (_copyCommandAllocator[i] != nullptr)
-        {
-            _copyCommandAllocator[i]->Release();
-            _copyCommandAllocator[i] = nullptr;
-        }
-
-        if (_copyCommandList[i] != nullptr)
-        {
-            _copyCommandList[i]->Release();
-            _copyCommandList[i] = nullptr;
-        }
+        SAFE_RELEASE(_copyCommandAllocator[i]);
+        SAFE_RELEASE(_copyCommandList[i]);
     }
 }
 

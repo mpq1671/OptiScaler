@@ -424,11 +424,7 @@ OS_Dx11::OS_Dx11(std::string InName, ID3D11Device* InDevice, bool InUpsample)
             }
         }
 
-        if (shaderBlob != nullptr)
-        {
-            shaderBlob->Release();
-            shaderBlob = nullptr;
-        }
+        SAFE_RELEASE(shaderBlob);
 
         if (FAILED(hr))
         {
@@ -464,18 +460,9 @@ OS_Dx11::~OS_Dx11()
     if (!_init || State::Instance().isShuttingDown)
         return;
 
-    if (_computeShader != nullptr)
-        _computeShader->Release();
-
-    if (_constantBuffer != nullptr)
-        _constantBuffer->Release();
-
-    if (_srvInput != nullptr)
-        _srvInput->Release();
-
-    if (_uavOutput != nullptr)
-        _uavOutput->Release();
-
-    if (_buffer != nullptr)
-        _buffer->Release();
+    SAFE_RELEASE(_computeShader);
+    SAFE_RELEASE(_constantBuffer);
+    SAFE_RELEASE(_srvInput);
+    SAFE_RELEASE(_uavOutput);
+    SAFE_RELEASE(_buffer);
 }

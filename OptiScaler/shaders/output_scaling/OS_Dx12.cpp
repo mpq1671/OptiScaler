@@ -301,11 +301,7 @@ OS_Dx12::OS_Dx12(std::string InName, ID3D12Device* InDevice, bool InUpsample)
             return;
         }
 
-        if (_recEncodeShader != nullptr)
-        {
-            _recEncodeShader->Release();
-            _recEncodeShader = nullptr;
-        }
+        SAFE_RELEASE(_recEncodeShader);
     }
 
     _init = InitHeaps(InDevice, _frameHeaps, OS_NUM_OF_HEAPS);
@@ -321,9 +317,5 @@ OS_Dx12::~OS_Dx12()
         _frameHeaps[i].ReleaseHeaps();
     }
 
-    if (_buffer != nullptr)
-    {
-        _buffer->Release();
-        _buffer = nullptr;
-    }
+    SAFE_RELEASE(_buffer);
 }

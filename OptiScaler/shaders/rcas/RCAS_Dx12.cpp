@@ -212,26 +212,13 @@ RCAS_Dx12::~RCAS_Dx12()
     if (!_init || State::Instance().isShuttingDown)
         return;
 
-    if (_pipelineStateDA != nullptr)
-    {
-        _pipelineStateDA->Release();
-        _pipelineStateDA = nullptr;
-    }
-
-    if (_pipelineStateLCDA != nullptr)
-    {
-        _pipelineStateLCDA->Release();
-        _pipelineStateLCDA = nullptr;
-    }
+    SAFE_RELEASE(_pipelineStateDA);
+    SAFE_RELEASE(_pipelineStateLCDA);
 
     for (int i = 0; i < RCAS_NUM_OF_HEAPS; i++)
     {
         _frameHeaps[i].ReleaseHeaps();
     }
 
-    if (_buffer != nullptr)
-    {
-        _buffer->Release();
-        _buffer = nullptr;
-    }
+    SAFE_RELEASE(_buffer);
 }

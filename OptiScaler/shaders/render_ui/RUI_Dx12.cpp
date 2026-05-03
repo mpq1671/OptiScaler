@@ -264,20 +264,11 @@ RUI_Dx12::~RUI_Dx12()
     if (!_init || State::Instance().isShuttingDown)
         return;
 
-    if (_rootSignature != nullptr)
-    {
-        _rootSignature->Release();
-        _rootSignature = nullptr;
-    }
+    SAFE_RELEASE(_rootSignature);
+    SAFE_RELEASE(_constantBuffer);
 
     for (int i = 0; i < HC_NUM_OF_HEAPS; i++)
     {
         _frameHeaps[i].ReleaseHeaps();
-    }
-
-    if (_constantBuffer != nullptr)
-    {
-        _constantBuffer->Release();
-        _constantBuffer = nullptr;
     }
 }

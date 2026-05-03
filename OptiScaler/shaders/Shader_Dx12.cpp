@@ -11,23 +11,9 @@ Shader_Dx12::~Shader_Dx12()
     if (!_init || State::Instance().isShuttingDown)
         return;
 
-    if (_pipelineState != nullptr)
-    {
-        _pipelineState->Release();
-        _pipelineState = nullptr;
-    }
-
-    if (_rootSignature != nullptr)
-    {
-        _rootSignature->Release();
-        _rootSignature = nullptr;
-    }
-
-    if (_constantBuffer != nullptr)
-    {
-        _constantBuffer->Release();
-        _constantBuffer = nullptr;
-    }
+    SAFE_RELEASE(_pipelineState);
+    SAFE_RELEASE(_rootSignature);
+    SAFE_RELEASE(_constantBuffer);
 }
 
 DXGI_FORMAT Shader_Dx12::TranslateTypelessFormats(DXGI_FORMAT format)

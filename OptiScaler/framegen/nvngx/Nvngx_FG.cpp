@@ -386,11 +386,7 @@ NVSDK_NGX_Result Nvngx_FG::D3D12_EvaluateFeature(ID3D12GraphicsCommandList* InCm
             D3D12_HEAP_FLAGS heapFlags;
 
             static ID3D12Resource* copiedDlssgDepth = nullptr;
-            if (copiedDlssgDepth != nullptr)
-            {
-                copiedDlssgDepth->Release();
-                copiedDlssgDepth = nullptr;
-            }
+            SAFE_RELEASE(copiedDlssgDepth);
 
             if (dlssgDepth->GetHeapProperties(&heapProperties, &heapFlags) == S_OK)
             {

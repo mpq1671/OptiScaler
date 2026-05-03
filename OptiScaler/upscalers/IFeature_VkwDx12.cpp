@@ -24,16 +24,6 @@
     dest.Height = height;                                                                                              \
     dest.Format = format;
 
-#define SAFE_RELEASE(p)                                                                                                \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (p && p != nullptr)                                                                                         \
-        {                                                                                                              \
-            (p)->Release();                                                                                            \
-            (p) = nullptr;                                                                                             \
-        }                                                                                                              \
-    } while ((void) 0, 0)
-
 #define SAFE_DESTROY_VK(func, device, handle, allocator)                                                               \
     do                                                                                                                 \
     {                                                                                                                  \
@@ -656,17 +646,9 @@ bool IFeature_VkwDx12::CopyTextureFromVkToDx12(VkCommandBuffer InCmdBuffer, NVSD
             OutResource->VkSharedMemory = VK_NULL_HANDLE;
         }
 
-        if (OutResource->SharedHandle != NULL)
-        {
-            CloseHandle(OutResource->SharedHandle);
-            OutResource->SharedHandle = NULL;
-        }
+        SAFE_CLOSE_HANDLE(OutResource->SharedHandle);
 
-        if (OutResource->Dx12Resource != nullptr)
-        {
-            OutResource->Dx12Resource->Release();
-            OutResource->Dx12Resource = nullptr;
-        }
+        SAFE_RELEASE(OutResource->Dx12Resource);
 
         ASSIGN_VK_DESC((*OutResource), (*OutResource), InParam->Resource.ImageViewInfo.Width,
                        InParam->Resource.ImageViewInfo.Height, InParam->Resource.ImageViewInfo.Format);
@@ -1781,36 +1763,12 @@ void IFeature_VkwDx12::ReleaseSharedResources()
     SAFE_RELEASE(vkExp.Dx12Resource);
 
     // Close handles
-    if (vkColor.SharedHandle != NULL)
-    {
-        CloseHandle(vkColor.SharedHandle);
-        vkColor.SharedHandle = NULL;
-    }
-    if (vkMv.SharedHandle != NULL)
-    {
-        CloseHandle(vkMv.SharedHandle);
-        vkMv.SharedHandle = NULL;
-    }
-    if (vkOut.SharedHandle != NULL)
-    {
-        CloseHandle(vkOut.SharedHandle);
-        vkOut.SharedHandle = NULL;
-    }
-    if (vkDepth.SharedHandle != NULL)
-    {
-        CloseHandle(vkDepth.SharedHandle);
-        vkDepth.SharedHandle = NULL;
-    }
-    if (vkReactive.SharedHandle != NULL)
-    {
-        CloseHandle(vkReactive.SharedHandle);
-        vkReactive.SharedHandle = NULL;
-    }
-    if (vkExp.SharedHandle != NULL)
-    {
-        CloseHandle(vkExp.SharedHandle);
-        vkExp.SharedHandle = NULL;
-    }
+    SAFE_CLOSE_HANDLE(vkColor.SharedHandle);
+    SAFE_CLOSE_HANDLE(vkMv.SharedHandle);
+    SAFE_CLOSE_HANDLE(vkOut.SharedHandle);
+    SAFE_CLOSE_HANDLE(vkDepth.SharedHandle);
+    SAFE_CLOSE_HANDLE(vkReactive.SharedHandle);
+    SAFE_CLOSE_HANDLE(vkExp.SharedHandle);
 
     // Cleanup Vulkan copy command buffer
     // Loop in VulkanQueueCommandBuffers instead of hardcoding 2 command buffers, in case we have more in the future
@@ -1824,11 +1782,7 @@ void IFeature_VkwDx12::ReleaseSharedResources()
                 b.VulkanBarrierCommandBuffer[i] = VK_NULL_HANDLE;
             }
 
-            if (b.VulkanBarrierCommandPool[i] != VK_NULL_HANDLE)
-            {
-                vkDestroyCommandPool(VulkanDevice, b.VulkanBarrierCommandPool[i], nullptr);
-                b.VulkanBarrierCommandPool[i] = VK_NULL_HANDLE;
-            }
+            SAFE_DESTROY_VK(vkDestroyCommandPool, VulkanDevice, b.VulkanBarrierCommandPool[i], nullptr);
 
             if (b.VulkanCopyCommandBuffer[i] != VK_NULL_HANDLE && b.VulkanCopyCommandPool[i] != VK_NULL_HANDLE)
             {
@@ -1836,11 +1790,7 @@ void IFeature_VkwDx12::ReleaseSharedResources()
                 b.VulkanCopyCommandBuffer[i] = VK_NULL_HANDLE;
             }
 
-            if (b.VulkanCopyCommandPool[i] != VK_NULL_HANDLE)
-            {
-                vkDestroyCommandPool(VulkanDevice, b.VulkanCopyCommandPool[i], nullptr);
-                b.VulkanCopyCommandPool[i] = VK_NULL_HANDLE;
-            }
+            SAFE_DESTROY_VK(vkDestroyCommandPool, VulkanDevice, b.VulkanCopyCommandPool[i], nullptr);
         }
     }
 
@@ -1857,59 +1807,16 @@ void IFeature_VkwDx12::ReleaseSharedResources()
     SAFE_RELEASE(Dx12CommandQueue);
     SAFE_RELEASE(Dx12Fence);
 
-    if (Dx12FenceEvent)
-    {
-        CloseHandle(Dx12FenceEvent);
-        Dx12FenceEvent = nullptr;
-    }
+    SAFE_CLOSE_HANDLE(Dx12FenceEvent);
 
-    if (ColorCopy != nullptr && ColorCopy.get() != nullptr)
-    {
-        ColorCopy.reset();
-        ColorCopy = nullptr;
-    }
-
-    if (VelocityCopy != nullptr && VelocityCopy.get() != nullptr)
-    {
-        VelocityCopy.reset();
-        VelocityCopy = nullptr;
-    }
-
-    if (DT != nullptr && DT.get() != nullptr)
-    {
-        DT.reset();
-        DT = nullptr;
-    }
-
-    if (DepthCopy != nullptr && DepthCopy.get() != nullptr)
-    {
-        DepthCopy.reset();
-        DepthCopy = nullptr;
-    }
-
-    if (ReactiveCopy != nullptr && ReactiveCopy.get() != nullptr)
-    {
-        ReactiveCopy.reset();
-        ReactiveCopy = nullptr;
-    }
-
-    if (ExpCopy != nullptr && ExpCopy.get() != nullptr)
-    {
-        ExpCopy.reset();
-        ExpCopy = nullptr;
-    }
-
-    if (OutCopy != nullptr && OutCopy.get() != nullptr)
-    {
-        OutCopy.reset();
-        OutCopy = nullptr;
-    }
-
-    if (OutCopy2 != nullptr && OutCopy2.get() != nullptr)
-    {
-        OutCopy2.reset();
-        OutCopy2 = nullptr;
-    }
+    ColorCopy.reset();
+    VelocityCopy.reset();
+    DT.reset();
+    DepthCopy.reset();
+    ReactiveCopy.reset();
+    ExpCopy.reset();
+    OutCopy.reset();
+    OutCopy2.reset();
 }
 
 void IFeature_VkwDx12::ReleaseSyncResources()
@@ -1920,11 +1827,7 @@ void IFeature_VkwDx12::ReleaseSyncResources()
         SAFE_DESTROY_VK(vkDestroySemaphore, VulkanDevice, vkSemaphoreTextureCopy[i], nullptr);
         SAFE_RELEASE(dx12FenceTextureCopy[i]);
 
-        if (vkSHForTextureCopy[i] != NULL)
-        {
-            CloseHandle(vkSHForTextureCopy[i]);
-            vkSHForTextureCopy[i] = NULL;
-        }
+        SAFE_CLOSE_HANDLE(vkSHForTextureCopy[i]);
 
         SAFE_DESTROY_VK(vkDestroySemaphore, VulkanDevice, vkSemaphoreCopyBack[i], nullptr);
     }
@@ -2149,29 +2052,10 @@ IFeature_VkwDx12::~IFeature_VkwDx12()
 
     ReleaseSharedResources();
 
-    if (DT != nullptr && DT.get() != nullptr)
-    {
-        DT.reset();
-        DT = nullptr;
-    }
-
-    if (OutputScaler != nullptr && OutputScaler.get() != nullptr)
-    {
-        OutputScaler.reset();
-        OutputScaler = nullptr;
-    }
-
-    if (RCAS != nullptr && RCAS.get() != nullptr)
-    {
-        RCAS.reset();
-        RCAS = nullptr;
-    }
-
-    if (Bias != nullptr && Bias.get() != nullptr)
-    {
-        Bias.reset();
-        Bias = nullptr;
-    }
+    DT.reset();
+    OutputScaler.reset();
+    RCAS.reset();
+    Bias.reset();
 }
 
 bool IFeature_VkwDx12::CreateSharedFenceSemaphore()

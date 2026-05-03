@@ -106,6 +106,26 @@ inline DWORD processId;
 #define LOG_TRACK(msg, ...)
 #endif
 
+#define SAFE_RELEASE(p)                                                                                                \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (p && p != nullptr)                                                                                         \
+        {                                                                                                              \
+            (p)->Release();                                                                                            \
+            (p) = nullptr;                                                                                             \
+        }                                                                                                              \
+    } while ((void) 0, 0);
+
+#define SAFE_CLOSE_HANDLE(p)                                                                                           \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        if (p)                                                                                                         \
+        {                                                                                                              \
+            CloseHandle(p);                                                                                            \
+            (p) = nullptr;                                                                                             \
+        }                                                                                                              \
+    } while ((void) 0, 0)
+
 struct feature_version
 {
     unsigned int major;

@@ -117,11 +117,7 @@ std::vector<GpuInformation> IdentifyGpu::checkGpuInfo()
             queryNvapi(gpuInfo);
         }
 
-        if (gpuInfo.d3d12device)
-        {
-            gpuInfo.d3d12device->Release();
-            gpuInfo.d3d12device = nullptr;
-        }
+        SAFE_RELEASE(gpuInfo.d3d12device);
     }
 
     return localCachedInfo;

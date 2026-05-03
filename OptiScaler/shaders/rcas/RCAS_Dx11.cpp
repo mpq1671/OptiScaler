@@ -556,27 +556,12 @@ RCAS_Dx11::~RCAS_Dx11()
     if (!_init || State::Instance().isShuttingDown)
         return;
 
-    if (_computeShader != nullptr)
-        _computeShader->Release();
-
-    if (_computeShaderDA != nullptr)
-        _computeShaderDA->Release();
-
-    if (_constantBuffer != nullptr)
-        _constantBuffer->Release();
-
-    if (_srvInput != nullptr)
-        _srvInput->Release();
-
-    if (_srvMotionVectors != nullptr)
-        _srvMotionVectors->Release();
-
-    if (_srvDepth != nullptr)
-        _srvDepth->Release();
-
-    if (_uavOutput != nullptr)
-        _uavOutput->Release();
-
-    if (_buffer != nullptr)
-        _buffer->Release();
+    SAFE_RELEASE(_computeShader);
+    SAFE_RELEASE(_computeShaderDA);
+    SAFE_RELEASE(_constantBuffer);
+    SAFE_RELEASE(_srvInput);
+    SAFE_RELEASE(_srvMotionVectors);
+    SAFE_RELEASE(_srvDepth);
+    SAFE_RELEASE(_uavOutput);
+    SAFE_RELEASE(_buffer);
 }

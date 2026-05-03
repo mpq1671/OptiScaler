@@ -178,17 +178,8 @@ HRESULT FGHooks::CreateSwapChain(IDXGIFactory* pFactory, IUnknown* pDevice, DXGI
     {
         if (State::Instance().currentD3D12Device != nullptr)
         {
-            if (resizeFence != nullptr)
-            {
-                resizeFence->Release();
-                resizeFence = nullptr;
-            }
-
-            if (resizeFenceEvent != nullptr)
-            {
-                CloseHandle(resizeFenceEvent);
-                resizeFenceEvent = nullptr;
-            }
+            SAFE_RELEASE(resizeFence);
+            SAFE_CLOSE_HANDLE(resizeFenceEvent);
 
             State::Instance().currentD3D12Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&resizeFence));
             resizeFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -306,17 +297,8 @@ HRESULT FGHooks::CreateSwapChainForHwnd(IDXGIFactory* pFactory, IUnknown* pDevic
     {
         if (State::Instance().currentD3D12Device != nullptr)
         {
-            if (resizeFence != nullptr)
-            {
-                resizeFence->Release();
-                resizeFence = nullptr;
-            }
-
-            if (resizeFenceEvent != nullptr)
-            {
-                CloseHandle(resizeFenceEvent);
-                resizeFenceEvent = nullptr;
-            }
+            SAFE_RELEASE(resizeFence);
+            SAFE_CLOSE_HANDLE(resizeFenceEvent);
 
             State::Instance().currentD3D12Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&resizeFence));
             resizeFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);

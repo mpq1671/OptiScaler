@@ -1083,29 +1083,10 @@ void XeFG_Dx12::ReleaseObjects()
 {
     for (size_t i = 0; i < BUFFER_COUNT; i++)
     {
-        if (_uiCommandAllocator[i] != nullptr)
-        {
-            _uiCommandAllocator[i]->Release();
-            _uiCommandAllocator[i] = nullptr;
-        }
-
-        if (_uiCommandList[i] != nullptr)
-        {
-            _uiCommandList[i]->Release();
-            _uiCommandList[i] = nullptr;
-        }
-
-        if (_scCommandAllocator[i] != nullptr)
-        {
-            _scCommandAllocator[i]->Release();
-            _scCommandAllocator[i] = nullptr;
-        }
-
-        if (_scCommandList[i] != nullptr)
-        {
-            _scCommandList[i]->Release();
-            _scCommandList[i] = nullptr;
-        }
+        SAFE_RELEASE(_uiCommandAllocator[i]);
+        SAFE_RELEASE(_uiCommandList[i]);
+        SAFE_RELEASE(_scCommandAllocator[i]);
+        SAFE_RELEASE(_scCommandList[i]);
     }
 
     _renderUI.reset();

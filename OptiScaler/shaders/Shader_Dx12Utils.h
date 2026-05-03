@@ -122,11 +122,8 @@ class FrameDescriptorHeap
         // Also need to create shaders when they are used to prevent creating heaps when not used
         // return;
 
-        if (heapCSU)
-            heapCSU->Release();
-
-        if (heapRtv)
-            heapRtv->Release();
+        SAFE_RELEASE(heapCSU);
+        SAFE_RELEASE(heapRtv);
     }
 
     ~FrameDescriptorHeap() { ReleaseHeaps(); }

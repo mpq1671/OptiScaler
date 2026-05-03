@@ -14,16 +14,6 @@
     dest.BindFlags = src.BindFlags;                                                                                    \
     dest.MiscFlags = src.MiscFlags;
 
-#define SAFE_RELEASE(p)                                                                                                \
-    do                                                                                                                 \
-    {                                                                                                                  \
-        if (p && p != nullptr)                                                                                         \
-        {                                                                                                              \
-            (p)->Release();                                                                                            \
-            (p) = nullptr;                                                                                             \
-        }                                                                                                              \
-    } while ((void) 0, 0)
-
 void IFeature_Dx11wDx12::ResourceBarrier(ID3D12GraphicsCommandList* commandList, ID3D12Resource* resource,
                                          D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState)
 {
@@ -276,11 +266,7 @@ void IFeature_Dx11wDx12::ReleaseSharedResources()
     SAFE_RELEASE(Dx12CommandQueue);
     SAFE_RELEASE(Dx12Fence);
 
-    if (Dx12FenceEvent)
-    {
-        CloseHandle(Dx12FenceEvent);
-        Dx12FenceEvent = nullptr;
-    }
+    SAFE_CLOSE_HANDLE(Dx12FenceEvent);
 
     // SAFE_RELEASE(Dx12Device);
 }
@@ -290,11 +276,7 @@ void IFeature_Dx11wDx12::ReleaseSyncResources()
     SAFE_RELEASE(dx11FenceTextureCopy);
     SAFE_RELEASE(dx12FenceTextureCopy);
 
-    if (dx11SHForTextureCopy != NULL)
-    {
-        CloseHandle(dx11SHForTextureCopy);
-        dx11SHForTextureCopy = NULL;
-    }
+    SAFE_CLOSE_HANDLE(dx11SHForTextureCopy);
 }
 
 HRESULT IFeature_Dx11wDx12::CreateDx12Device(D3D_FEATURE_LEVEL InFeatureLevel)
@@ -650,8 +632,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
 
     if (paramColor && dx11Color.Dx12Handle != dx11Color.Dx11Handle)
     {
-        if (dx11Color.Dx12Handle != NULL)
-            CloseHandle(dx11Color.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Color.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Color.Dx11Handle, IID_PPV_ARGS(&dx11Color.Dx12Resource));
 
@@ -666,8 +647,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
 
     if (paramMv && dx11Mv.Dx12Handle != dx11Mv.Dx11Handle)
     {
-        if (dx11Mv.Dx12Handle != NULL)
-            CloseHandle(dx11Mv.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Mv.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Mv.Dx11Handle, IID_PPV_ARGS(&dx11Mv.Dx12Resource));
 
@@ -682,8 +662,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
 
     if (paramOutput[frame] && dx11Out.Dx12Handle != dx11Out.Dx11Handle)
     {
-        if (dx11Out.Dx12Handle != NULL)
-            CloseHandle(dx11Out.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Out.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Out.Dx11Handle, IID_PPV_ARGS(&dx11Out.Dx12Resource));
 
@@ -698,8 +677,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
 
     if (paramDepth && dx11Depth.Dx12Handle != dx11Depth.Dx11Handle)
     {
-        if (dx11Depth.Dx12Handle != NULL)
-            CloseHandle(dx11Depth.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Depth.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Depth.Dx11Handle, IID_PPV_ARGS(&dx11Depth.Dx12Resource));
 
@@ -720,8 +698,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
     }
     else if (paramExposure && dx11Exp.Dx12Handle != dx11Exp.Dx11Handle)
     {
-        if (dx11Exp.Dx12Handle != NULL)
-            CloseHandle(dx11Exp.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Exp.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Exp.Dx11Handle, IID_PPV_ARGS(&dx11Exp.Dx12Resource));
 
@@ -737,8 +714,7 @@ bool IFeature_Dx11wDx12::ProcessDx11Textures(const NVSDK_NGX_Parameter* InParame
     if (!Config::Instance()->DisableReactiveMask.value_or(false) && paramReactiveMask &&
         dx11Reactive.Dx12Handle != dx11Reactive.Dx11Handle)
     {
-        if (dx11Reactive.Dx12Handle != NULL)
-            CloseHandle(dx11Reactive.Dx12Handle);
+        SAFE_CLOSE_HANDLE(dx11Reactive.Dx12Handle);
 
         result = _dx11on12Device->OpenSharedHandle(dx11Reactive.Dx11Handle, IID_PPV_ARGS(&dx11Reactive.Dx12Resource));
 
@@ -954,9 +930,5 @@ IFeature_Dx11wDx12::~IFeature_Dx11wDx12()
 
     ReleaseSharedResources();
 
-    if (DT != nullptr && DT.get() != nullptr)
-    {
-        DT.reset();
-        DT = nullptr;
-    }
+    DT.reset();
 }
